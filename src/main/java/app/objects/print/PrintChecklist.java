@@ -1,5 +1,6 @@
 package app.objects.print;
 
+
 import app.ConnectDataBase;
 import app.objects.NormalDocument;
 import app.objects.Position;
@@ -8,6 +9,7 @@ import app.objects.Worker;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.List;
 
 public class PrintChecklist {
