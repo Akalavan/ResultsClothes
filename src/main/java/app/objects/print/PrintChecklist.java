@@ -1,8 +1,13 @@
 package app.objects.print;
 
+import app.ConnectDataBase;
 import app.objects.NormalDocument;
 import app.objects.Position;
+import app.objects.Worker;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class PrintChecklist {
@@ -68,7 +73,26 @@ public class PrintChecklist {
         return clothesList;
     }
 
-    public void setClothesList(List<Clothes> clothesList) {
-        this.clothesList = clothesList;
+    public void setClothesList() {
+        Statement stmt;
+        ResultSet result;
+
+        try {
+            ConnectDataBase CDB = new ConnectDataBase();
+            stmt = CDB.getStmt();
+
+            result = stmt.executeQuery("select w.TABLE_PERSONAL, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.NAME from WORKER w, POSITION p\n" +
+                    "where w.ID_POSITION = p.ID_POSITION");
+            int i = 0;
+            while (result.next()) {
+                clothesList.add(new Clothes(
+                        result.getString("TABLE_PERSONAL"),
+                        result.getString("SECOND_NAME"),
+                        result.getString("FIRST_NAME")));
+                i++;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }
