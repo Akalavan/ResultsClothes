@@ -6,13 +6,17 @@ import app.objects.NormalDocument;
 import app.objects.Position;
 import app.objects.Worker;
 
+import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PrintChecklist {
+    private String tableNumber;
     private String name;
     private String surname;
     private String patronymic;
@@ -20,15 +24,23 @@ public class PrintChecklist {
     private Position position;
     private List<Clothes> clothesList;
 
+    private Statement stmt;
+    private ResultSet result;
 
-    public PrintChecklist(String name, String surname, String patronymic,
-                          NormalDocument document, Position position, List<Clothes> clothesList) {
+
+    public PrintChecklist(String tableNumber, String name, String surname, String patronymic, Position position) {
+        this.tableNumber = tableNumber;
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
-        this.document = document;
         this.position = position;
-        this.clothesList = clothesList;
+        ConnectDataBase CDB = new ConnectDataBase();
+        stmt = CDB.getStmt();
+        setClothesList();
+        setDocument();
+    }
+
+    public PrintChecklist() {
     }
 
     public String getName() {
@@ -59,8 +71,20 @@ public class PrintChecklist {
         return document;
     }
 
-    public void setDocument(NormalDocument document) {
-        this.document = document;
+    public void setDocument() {
+        try {
+            result = stmt.executeQuery(
+                    "select * from NORMAL_DOCUMENT nd\n" +
+                            "join CHECKLIST C on nd.ID_NORMAL_DOCUMENT = C.ID_NORMAL_DOCUMENT\n" +
+                            "WHERE C.ID_POSITION = " + position.getId() +" limit 1;");
+
+            while (result.next()) {
+                document = new NormalDocument(result.getInt(1), result.getString(2));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
     }
 
     public Position getPosition() {
@@ -71,30 +95,43 @@ public class PrintChecklist {
         this.position = position;
     }
 
+    public String getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(String tableNumber) {
+        this.tableNumber = tableNumber;
+    }
+
     public List<Clothes> getClothesList() {
         return clothesList;
     }
 
     public void setClothesList() {
-        Statement stmt;
-        ResultSet result;
-
+        clothesList = new ArrayList<>();
         try {
-            ConnectDataBase CDB = new ConnectDataBase();
-            stmt = CDB.getStmt();
 
-            result = stmt.executeQuery("select w.TABLE_PERSONAL, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.NAME from WORKER w, POSITION p\n" +
-                    "where w.ID_POSITION = p.ID_POSITION");
+            result = stmt.executeQuery(
+                    "SELECT P.NAME, P.UNIT, C.QUANTITY_YEAR FROM PERSONAL_PROTECTIVE P " +
+                    "JOIN CHECKLIST C on P.ID_PERSONAL_PROTECTIVE = C.ID_PERSONAL_PROTECTIVE " +
+                    "WHERE C.ID_POSITION = 1;");
             int i = 0;
             while (result.next()) {
                 clothesList.add(new Clothes(
-                        result.getString("TABLE_PERSONAL"),
-                        result.getString("SECOND_NAME"),
-                        result.getString("FIRST_NAME")));
+                        result.getString("NAME"),
+                        result.getString("UNIT"),
+                        result.getString("QUANTITY_YEAR")));
                 i++;
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+        System.out.println(clothesList);
+    }
+
+    public static void main(String[] args) {
+        PrintChecklist p = new PrintChecklist();
+        p.setClothesList();
     }
 }

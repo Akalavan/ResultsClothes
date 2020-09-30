@@ -36,4 +36,13 @@ public class Clothes {
     public void setQuantity_year(String quantity_year) {
         this.quantity_year = quantity_year;
     }
+
+    @Override
+    public String toString() {
+        return "Clothes{" +
+                "nameClothes='" + nameClothes + '\'' +
+                ", unit='" + unit + '\'' +
+                ", quantity_year='" + quantity_year + '\'' +
+                '}';
+    }
 }

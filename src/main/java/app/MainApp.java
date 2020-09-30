@@ -1,6 +1,7 @@
 package app;
 
 import app.controllers.PersonOverviewController;
+import app.objects.Position;
 import app.objects.Worker;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -26,16 +27,20 @@ public class MainApp extends Application {
 
     public MainApp() {
         Statement stmt;
-        ResultSet result;
+        ResultSet result, result1;
 
         try {
             ConnectDataBase CDB = new ConnectDataBase();
             stmt = CDB.getStmt();
 
-            result = stmt.executeQuery("select w.TABLE_PERSONAL, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.NAME from WORKER w, POSITION p\n" +
+            result = stmt.executeQuery("select w.TABLE_PERSONAL, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.ID_POSITION, p.NAME from WORKER w, POSITION p " +
                     "where w.ID_POSITION = p.ID_POSITION");
             int i = 0;
             while (result.next()) {
+
+                Position position = null;
+                position = new Position(result.getInt("ID_POSITION"), result.getString("NAME"));
+                System.out.println(position);
                 workerData.add(new Worker(
                         i,
                         result.getString("TABLE_PERSONAL"),
@@ -43,7 +48,7 @@ public class MainApp extends Application {
                         result.getString("FIRST_NAME"),
                         result.getString("SURNAME"),
                         "data",
-                        result.getString("NAME")));
+                        position));
                 i++;
             }
         } catch (SQLException throwables) {

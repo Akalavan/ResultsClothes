@@ -59,7 +59,7 @@
                   </GridPane>
                   <ButtonBar layoutX="144.0" layoutY="344.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0">
                     <buttons>
-                      <Button mnemonicParsing="false" text="Распечатать" />
+                      <Button fx:id="print" mnemonicParsing="false" text="Распечатать" />
                     </buttons>
                   </ButtonBar>
                </children>
