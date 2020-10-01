@@ -2,10 +2,10 @@ package app.unload.Excel;
 
 import app.objects.print.Clothes;
 import app.objects.print.PrintChecklist;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 
 import java.awt.*;
 import java.io.*;
@@ -23,7 +23,7 @@ public class ManagingSpreadsheet  {
 
     public void OpenWorkBook() {
         try {
-            file = new File("C:/excel/Учёт выдачи средств индивидуальной защиты.xlsx");
+            file = new File("C:/java/ResultsClothes/cap.xlsx");
             FileInputStream inputStream = new FileInputStream(file);
             workbook = new XSSFWorkbook(inputStream);
             if (file.isFile() && file.exists()) {
@@ -68,17 +68,30 @@ public class ManagingSpreadsheet  {
              checklist.getClothesList()) {
             // Наименование средств индивидульноай защиты (объединение ячеек)
             //sheet.addMergedRegion(new CellRangeAddress(i, i, 0, 4));
+
             cell = sheet.getRow(i).getCell(0);
             cell.setCellValue(clothes.getNameClothes());
+            cell.setCellStyle(createStyleForBorder(XSSFCellBorder.BorderSide.LEFT, BorderStyle.THICK));
+
+            // Единица измерения
             cell = sheet.getRow(i).getCell(6);
             cell.setCellValue(clothes.getUnit());
+
+
+            // Кол-во на год
             cell = sheet.getRow(i).getCell(7);
             cell.setCellValue(clothes.getQuantity_year());
+            cell.setCellStyle(createStyleForBorder(XSSFCellBorder.BorderSide.RIGHT, BorderStyle.THICK));
 
             i++;
         }
+        XSSFRow row = sheet.getRow(i);
+        row.setRowStyle(createStyleForBorder(XSSFCellBorder.BorderSide.BOTTOM, BorderStyle.THICK));
+       // sheet.getRow(i).setRowStyle(createStyleForBorder(XSSFCellBorder.BorderSide.BOTTOM, BorderStyle.THICK));
 
         try {
+            String name = "Перечень " + checklist.getPosition().getName() + " " + checklist.getSurname() + " " + checklist.getName() + " " + checklist.getPatronymic() +".xlsx";
+            file = new File("C:/excel/" + name);
             FileOutputStream outputStream = new FileOutputStream(file);
             workbook.write(outputStream);
             Desktop desktop = null;
@@ -93,10 +106,29 @@ public class ManagingSpreadsheet  {
 
     }
 
+    private XSSFCellStyle createStyleForBorder(XSSFCellBorder.BorderSide borderSide, BorderStyle borderStyle) {
+        XSSFCellStyle style = workbook.createCellStyle();
+        switch (borderSide) {
+            case TOP:
+                style.setBorderTop(borderStyle);
+                break;
+            case BOTTOM:
+                style.setBorderBottom(borderStyle);
+                break;
+            case LEFT:
+                style.setBorderLeft(borderStyle);
+                break;
+            case RIGHT:
+                style.setBorderRight(borderStyle);
+                break;
+        }
+        return style;
+    }
+
     static void test() {
 
         try {
-            file = new File("C:/excel/Учёт выдачи средств индивидуальной защиты.xlsx");
+            file = new File("C:/java/ResultsClothes/cap.xlsx");
             FileInputStream inputStream = new FileInputStream(file);
             workbook = new XSSFWorkbook(inputStream);
             if (file.isFile() && file.exists()) {
