@@ -33,7 +33,7 @@ public class MainApp extends Application {
             ConnectDataBase CDB = new ConnectDataBase();
             stmt = CDB.getStmt();
 
-            result = stmt.executeQuery("select w.TABLE_PERSONAL, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.ID_POSITION, p.NAME from WORKER w, POSITION p " +
+            result = stmt.executeQuery("select w.TABLE, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.ID_POSITION, p.NAME from WORKER w, POSITION p " +
                     "where w.ID_POSITION = p.ID_POSITION");
             int i = 0;
             while (result.next()) {
@@ -43,7 +43,7 @@ public class MainApp extends Application {
                 System.out.println(position);
                 workerData.add(new Worker(
                         i,
-                        result.getString("TABLE_PERSONAL"),
+                        result.getString("TABLE"),
                         result.getString("SECOND_NAME"),
                         result.getString("FIRST_NAME"),
                         result.getString("SURNAME"),
