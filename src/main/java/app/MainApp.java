@@ -1,13 +1,19 @@
 package app;
 
+import app.controllers.AllPersonController;
+import app.controllers.MainController;
 import app.controllers.PersonOverviewController;
 import app.objects.Position;
 import app.objects.Worker;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -21,8 +27,10 @@ import java.sql.Statement;
 
 public class MainApp extends Application {
 
-    private ObservableList<Worker> workerData = FXCollections.observableArrayList();
-    private Stage primaryStage;
+    private static ObservableList<Worker> workerData = FXCollections.observableArrayList();
+    private static Stage primaryStage;
+    private static MainController mainController;
+    private static ConnectDataBase CDB;
     private BorderPane rootLayout;
 
     public MainApp() {
@@ -30,7 +38,7 @@ public class MainApp extends Application {
         ResultSet result, result1;
 
         try {
-            ConnectDataBase CDB = new ConnectDataBase();
+            CDB = new ConnectDataBase();
             stmt = CDB.getStmt();
 
             result = stmt.executeQuery("select w.TABLE, w.FIRST_NAME, w.SECOND_NAME, w.SURNAME, p.ID_POSITION, p.NAME from WORKER w, POSITION p " +
@@ -89,6 +97,7 @@ public class MainApp extends Application {
     }
 
     private void initRootLayout() {
+        mainController = new MainController();
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/view/RootLayout.fxml"));
@@ -97,16 +106,26 @@ public class MainApp extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public ObservableList<Worker> getWorkerData() {
+    public static ObservableList<Worker> getWorkerData() {
         return workerData;
     }
 
-    public Stage getPrimaryStage() {
+    public static Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public static MainController getMainController() {
+        return mainController;
+    }
+
+    public static ConnectDataBase getCDB() {
+        return CDB;
     }
 }

@@ -1,40 +1,11 @@
 package app;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class ConnectDataBase {
-    private Statement stmt = null;
-    public static void main(String[] args) {
+    private static Statement stmt = null;
 
-//        Connection con = null;
-//
-//        int result = 0;
-//
-//        try {
-//            //Registering the HSQLDB JDBC drive
-//            Class.forName("org.hsqldb.jdbc.JDBCDriver");
-//            //Creating the connecting with HSQLDB
-//            con = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/testdb", "SA", "");
-//
-//            if (con == null) {
-//                System.out.println("Problem with creating connection");
-//            } else {
-//                System.out.println("Connection created successfully");
-//
-//                stmt = con.createStatement();
-//
-//                // result = createTable(stmt);
-//                //  System.out.println("Table created successfully");
-//                result = dropTable(stmt, "tutorial_tbl");
-//                System.out.println("Table dropped successfully");
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace(System.out);
-//        }
+    public static void main(String[] args) {
 
     }
 
@@ -66,5 +37,23 @@ public class ConnectDataBase {
             e.printStackTrace(System.out);
         }
         return stmt;
+    }
+
+    public static ResultSet query(String query) {
+        ResultSet resultSet = null;
+        try {
+            resultSet = stmt.executeQuery(query);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return resultSet;
+    }
+
+    public static void queryInsert(String query) {
+        try {
+            stmt.executeUpdate(query);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

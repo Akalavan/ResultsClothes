@@ -1,7 +1,10 @@
 package app.unload.Excel;
 
+import app.MainApp;
 import app.objects.print.Clothes;
 import app.objects.print.PrintChecklist;
+import javafx.scene.control.Alert;
+import javafx.stage.DirectoryChooser;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -10,12 +13,14 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Path;
 
 public class ManagingSpreadsheet  {
 
     private static XSSFWorkbook workbook;
     private static File file;
     private PrintChecklist checklist;
+    private File path;
 
     public ManagingSpreadsheet(PrintChecklist checklist) {
         this.checklist = checklist;
@@ -24,7 +29,21 @@ public class ManagingSpreadsheet  {
 
     public void OpenWorkBook() {
         try {
-            file = new File("D:/java/ResultsClothes/cap.xlsx");
+            int countPath = getClass().getResource("").getPath().split("/").length;
+            System.out.println(getClass().getResource(""));
+            String s = String.valueOf(getClass().getResource(""));
+            String[] fullPath = getClass().getResource("").getPath().split("/");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, s);
+            alert.showAndWait();
+            StringBuilder pathCap = new StringBuilder();
+            for (int i = 1; i < fullPath.length - 4; i++) {
+                pathCap.append(fullPath[i]);
+                pathCap.append("/");
+            }
+            pathCap.append("cap.xlsx");
+            Alert alert1 = new Alert(Alert.AlertType.INFORMATION, pathCap.toString());
+            alert1.showAndWait();
+            file = new File(pathCap.toString());
             FileInputStream inputStream = new FileInputStream(file);
             workbook = new XSSFWorkbook(inputStream);
             if (file.isFile() && file.exists()) {
@@ -99,7 +118,7 @@ public class ManagingSpreadsheet  {
     //    row.setRowStyle(createStyleForBorder(XSSFCellBorder.BorderSide.BOTTOM, BorderStyle.THICK));
        // sheet.getRow(i).setRowStyle(createStyleForBorder(XSSFCellBorder.BorderSide.BOTTOM, BorderStyle.THICK));
         cell = sheet.getRow(17).getCell(6);
-        cell.setCellValue("checklist.getDocument().getName()");
+        cell.setCellValue(checklist.getDocument().getName());
         cell.setCellStyle(createStyleForBorder(new XSSFCellBorder.BorderSide[]{XSSFCellBorder.BorderSide.TOP}, new BorderStyle[]{BorderStyle.THIN}));
         sheet.addMergedRegion(new CellRangeAddress(17, i - 1, 6, 6));
         XSSFCellStyle style = cell.getCellStyle();
@@ -109,7 +128,7 @@ public class ManagingSpreadsheet  {
 
         try {
             String name = "Перечень " + checklist.getPosition().getName() + " " + checklist.getSurname() + " " + checklist.getName() + " " + checklist.getPatronymic() +".xlsx";
-            file = new File("D:/java/excel/" + name);
+            file = new File(path.getPath() + "/" + name);
             FileOutputStream outputStream = new FileOutputStream(file);
             workbook.write(outputStream);
             Desktop desktop = null;
@@ -161,9 +180,8 @@ public class ManagingSpreadsheet  {
     }
 
     static void test() {
-
         try {
-            file = new File("D:/java/ResultsClothes/cap.xlsx");
+            file = new File("cap.xlsx");
             FileInputStream inputStream = new FileInputStream(file);
             workbook = new XSSFWorkbook(inputStream);
             if (file.isFile() && file.exists()) {
@@ -173,7 +191,8 @@ public class ManagingSpreadsheet  {
             }
             inputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Не открыли");
+            alert.showAndWait();
         }
 
 
@@ -203,7 +222,20 @@ public class ManagingSpreadsheet  {
 
     public void print() {
         OpenWorkBook();
-        UpdateWorkBook();
+        if (path == null) {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Выберите папку");
+            String patchDesktop = System.getProperty("user.home") + "/" + "Desktop";
+            directoryChooser.setInitialDirectory(new File(patchDesktop));
+            path = directoryChooser.showDialog(MainApp.getPrimaryStage());
+
+        }
+        if (path != null)
+            UpdateWorkBook();
+        else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Не выбрана папка");
+            alert.showAndWait();
+        }
     }
 
     public static void main(String[] args) {

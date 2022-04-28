@@ -1,12 +1,15 @@
 package app.objects;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Position {
     private int id;
-    private String name;
+    private StringProperty name;
 
     public Position(int id, String name) {
         this.id = id;
-        this.name = name;
+        this.name = new SimpleStringProperty(name);
     }
 
     public int getId() {
@@ -18,11 +21,15 @@ public class Position {
     }
 
     public String getName() {
+        return name.get();
+    }
+
+    public StringProperty nameProperty() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     @Override

@@ -73,10 +73,16 @@ public class PrintChecklist {
 
     public void setDocument() {
         try {
+            //рабочая
             result = stmt.executeQuery(
                     "select * from NORMAL_DOCUMENT nd\n" +
                             "join CHECKLIST C on nd.ID_NORMAL_DOCUMENT = C.ID_NORMAL_DOCUMENT\n" +
                             "WHERE C.ID_POSITION = " + position.getId() +" limit 1;");
+//
+//            result = stmt.executeQuery(
+//                    "select * from NORMAL_DOCUMENT nd\n" +
+//                            "join CHECKLIST C on nd.ID_NORMAL_DOCUMENT = C.ID_NORMAL_DOCUMENT\n" +
+//                            "WHERE C.ID_POSITION = " + 1 +" limit 1;");
 
             while (result.next()) {
                 document = new NormalDocument(result.getInt(1), result.getString(2));
@@ -110,11 +116,11 @@ public class PrintChecklist {
     public void setClothesList() {
         clothesList = new ArrayList<>();
         try {
-
+            System.out.println("PrintChecklist.setClothesList() " + position.getId());
             result = stmt.executeQuery(
                     "SELECT P.NAME, P.UNIT, C.QUANTITY_YEAR FROM PERSONAL_PROTECTIVE P " +
                     "JOIN CHECKLIST C on P.ID_PERSONAL_PROTECTIVE = C.ID_PERSONAL_PROTECTIVE " +
-                    "WHERE C.ID_POSITION = 1;");
+                    "WHERE C.ID_POSITION = " + position.getId() + ";");
             int i = 0;
             while (result.next()) {
                 clothesList.add(new Clothes(

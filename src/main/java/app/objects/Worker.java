@@ -17,6 +17,17 @@ public class Worker {
     private ObjectProperty<LocalDate> dateAcceptance;
     private StringProperty dateAcceptanceS;
     private ObjectProperty<Position> position;
+    private ObjectProperty<Service> service;
+
+    public Worker() {
+        this.position = new SimpleObjectProperty<>();
+        this.service = new SimpleObjectProperty<>();
+        this.table = new SimpleStringProperty();
+        this.secondName = new SimpleStringProperty();
+        this.firstName = new SimpleStringProperty();
+        this.surname = new SimpleStringProperty();
+        this.dateAcceptance = new SimpleObjectProperty<>(LocalDate.now());
+    }
 
     public Worker(int id, String table, String secondName, String firstName, String surname, String dateAcceptanceS, Position position) {
         this.id = id;
@@ -117,8 +128,21 @@ public class Worker {
         return position;
     }
 
+
     public void setPosition(Position position) {
         this.position.set(position);
+    }
+
+    public Service getService() {
+        return service.get();
+    }
+
+    public ObjectProperty<Service> serviceProperty() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service.set(service);
     }
 }
 
